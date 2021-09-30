@@ -1,0 +1,18 @@
+awsRegion: us-east-1
+
+autoDiscovery:
+  clusterName: limoneno
+
+rbac:
+  create: true
+  serviceAccount:
+    create: false
+    name: cluster-autoscaler-sa
+
+resources: {}
+  # limits:
+  #   cpu: 50m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 50m
+  #   memory: 128Mi

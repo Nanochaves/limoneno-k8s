@@ -1,0 +1,7 @@
+clusterName: limoneno
+region: us-east-1
+vpcId: vpc-09877174b42229ce1
+
+serviceAccount:
+  create: false
+  name: aws-load-balancer-sa

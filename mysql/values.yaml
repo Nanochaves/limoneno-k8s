@@ -1,0 +1,23 @@
+image:
+  tag: 5.7.35
+
+auth:
+  username: "limoneno"
+  database: "limoneno"
+
+primary:
+  nodeSelector:
+    instance-class: memory
+  tolerations:
+  - key: instance-class
+    operator: Equal
+    value: memory
+    effect: NoSchedule
+
+  # resources:
+  #   requests:
+  #     cpu:
+  #     memory:
+  #   limits:
+  #     cpu:
+  #     memory:

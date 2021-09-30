@@ -1,0 +1,43 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: limoneno-authorization-policy-namespace
+  namespace: limoneno
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["limoneno"]
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  namespace: limoneno
+  name: http-frontend-inbound-authorization-policy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: limoneno-frontend-prod
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        ports:
+        - "80"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  namespace: limoneno
+  name: http-backend-inbound-authorization-policy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: limoneno-backend-prod
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        ports:
+        - "5000"

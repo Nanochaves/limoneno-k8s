@@ -1,0 +1,45 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: monitoring-stack
+spec:
+  background: false
+  validationFailureAction: enforce
+  rules:
+  - name: add-nodeselector
+    match:
+      resources:
+        kinds:
+        - Deployment
+        - Job
+        - StatefulSet
+        namespaces:
+        - "monitoring"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              nodeSelector:
+                instance-class: memory
+              tolerations:
+              - effect: NoSchedule
+                key: instance-class
+                operator: Equal
+                value: memory
+  - name: add-tolerations
+    match:
+      resources:
+        kinds:
+        - DaemonSet
+        namespaces:
+        - "monitoring"
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              tolerations:
+              - key: instance-class
+                effect: NoSchedule
+                operator: Exists

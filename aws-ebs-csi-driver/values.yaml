@@ -1,0 +1,14 @@
+image:
+  repository: 602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver
+
+enableVolumeResizing: true
+enableVolumeSnapshot: true
+controller:
+  serviceAccount:
+    create: false
+    name: ebs-csi-controller-sa
+
+node:
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists

@@ -1,0 +1,11 @@
+architecture: standalone
+auth:
+  enabled: false
+master:
+  nodeSelector:
+    instance-class: memory
+  tolerations:
+  - key: instance-class
+    operator: Equal
+    value: memory
+    effect: NoSchedule

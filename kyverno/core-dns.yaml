@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: spread-core-dns
+spec:
+  rules:
+    - name: spread-across-zones
+      match:
+        resources:
+          kinds:
+          - Deployment
+          namespaces:
+          - "kube-system"
+          selector:
+            matchLabels:
+              k8s-app: kube-dns
+          
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                +(topologySpreadConstraints):
+                - maxSkew: 1
+                  topologyKey: topology.kubernetes.io/zone
+                  whenUnsatisfiable: DoNotSchedule

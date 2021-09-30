@@ -1,0 +1,148 @@
+kind: ClusterConfig
+apiVersion: eksctl.io/v1alpha5
+metadata:
+  name: limoneno
+  region: us-east-1
+  version: "1.21"
+
+vpc:
+  nat:
+    gateway: HighlyAvailable
+
+availabilityZones: ['us-east-1a', 'us-east-1b']
+
+iam:
+  withOIDC: true
+
+  serviceAccounts:
+    - metadata:
+        name: cluster-autoscaler-sa
+        namespace: kube-system
+      wellKnownPolicies:
+        autoScaler: true
+
+    - metadata:
+        name: aws-load-balancer-sa
+        namespace: kube-system
+      wellKnownPolicies:
+        awsLoadBalancerController: true
+
+    - metadata:
+        name: ebs-csi-controller-sa
+        namespace: kube-system
+      wellKnownPolicies:
+        ebsCSIController: true
+
+    - metadata:
+        name: limoneno-backend-prod-sa
+        namespace: limoneno
+      attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+nodeGroups:
+  # general purpose nodes
+
+  - name: ng-gp-1a
+    instanceType: t3.small
+    availabilityZones: ["us-east-1a"]
+    minSize: 1
+    maxSize: 4
+    privateNetworking: true
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+    disableIMDSv1: true
+    disablePodIMDS: true
+
+
+  - name: ng-gp-1b
+    instanceType: t3.small
+    availabilityZones: ["us-east-1b"]
+    minSize: 1
+    maxSize: 4
+    privateNetworking: true
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+    disableIMDSv1: true
+    disablePodIMDS: true
+
+
+  # cpu optimized nodes
+
+  - name: ng-cpu-1a
+    instanceType: t3.small
+    availabilityZones: ["us-east-1a"]
+    minSize: 0
+    maxSize: 4
+    privateNetworking: true
+    labels:
+      instance-class: compute
+    taints:
+      instance-class: "compute:NoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+      k8s.io/cluster-autoscaler/node-template/label/instance-class: compute
+      k8s.io/cluster-autoscaler/node-template/taint/instance-class: "compute:NoSchedule"
+    disableIMDSv1: true
+    disablePodIMDS: true
+
+
+  - name: ng-cpu-1b
+    instanceType: t3.small
+    availabilityZones: ["us-east-1b"]
+    privateNetworking: true
+    minSize: 0
+    maxSize: 4
+    labels:
+      instance-class: compute
+    taints:
+      instance-class: "compute:NoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+      k8s.io/cluster-autoscaler/node-template/label/instance-class: compute
+      k8s.io/cluster-autoscaler/node-template/taint/instance-class: "compute:NoSchedule"
+    disableIMDSv1: true
+    disablePodIMDS: true
+
+
+
+    # memory optimized nodes
+
+  - name: ng-memory-1a
+    instanceType: t3.small
+    availabilityZones: ["us-east-1a"]
+    minSize: 0
+    maxSize: 4
+    privateNetworking: true
+    labels:
+      instance-class: memory
+    taints:
+      instance-class: "memory:NoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+      k8s.io/cluster-autoscaler/node-template/label/instance-class: memory
+      k8s.io/cluster-autoscaler/node-template/taint/instance-class: "memory:NoSchedule"
+    disableIMDSv1: true
+    disablePodIMDS: true
+
+  - name: ng-memory-1b
+    instanceType: t3.small
+    availabilityZones: ["us-east-1b"]
+    minSize: 0
+    maxSize: 4
+    privateNetworking: true
+    labels:
+      instance-class: memory
+    taints:
+      instance-class: "memory:NoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/limoneno: "owned"
+      k8s.io/cluster-autoscaler/node-template/label/instance-class: memory
+      k8s.io/cluster-autoscaler/node-template/taint/instance-class: "memory:NoSchedule"
+    disableIMDSv1: true
+    disablePodIMDS: true
